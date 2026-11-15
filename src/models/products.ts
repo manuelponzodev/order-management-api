@@ -3,5 +3,7 @@ export interface Product {
     name: string
     price: number
     stock: number
-    deletedAt: Date
+    deletedAt: Date | null
+    updatedAt: Date
+    createdAt: Date
 }

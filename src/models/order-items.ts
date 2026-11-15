@@ -4,5 +4,7 @@ export interface OrderItem {
     orderId: bigint
     unitPrice: number
     quantity: number
-    deletedAt: Date
+    deletedAt: Date | null
+    updatedAt: Date
+    createdAt: Date
 }

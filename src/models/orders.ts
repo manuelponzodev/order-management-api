@@ -9,6 +9,9 @@ export interface Order {
     id: bigint
     status: STATUSES
     shippingPrice: number
+    shippingAddress: string
     customerId: bigint
-    deletedAt: Date
+    deletedAt: Date | null
+    updatedAt: Date
+    createdAt: Date
 }
