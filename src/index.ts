@@ -1,7 +1,8 @@
 import express from 'express';
 import { config } from './config.js';
 import { pool } from './db.js';
-// routes
+import { errorHandler } from './middlewares/error-handler.js';
+import { notFound } from './middlewares/not-found.js';
 import { authRouter } from './modules/auth/auth.routes.js';
 
 const app = express();
@@ -16,6 +17,9 @@ app.get('/health', async (_req, res) => {
     res.status(503).json({ status: 'error', db: 'down', message: (err as Error).message });
   }
 });
+
+app.use(notFound)
+app.use(errorHandler)
 
 app.listen(config.PORT, () => {
   console.log(`API listening on http://localhost:${config.PORT}`);
