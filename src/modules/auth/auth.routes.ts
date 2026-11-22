@@ -1,20 +1,8 @@
 import { Router } from 'express';
-import { z } from 'zod';
+import { register } from './auth.controller.js';
 
 export const authRouter = Router();
 
-const registerSchema = z.object({
-    name: z.string().min(1),
-    email: z.email(),
-    password: z.string().min(8)
-})
+// POST
+authRouter.post('/register', register)
 
-authRouter.post('/register', (req, res) => {
-    const result = registerSchema.safeParse(req.body)
-    const isValidInput = result.success
-
-    if (!isValidInput) {
-        return res.status(400).json(z.flattenError(result.error))
-    }
-    return res.status(201).json(result.data)
-})
