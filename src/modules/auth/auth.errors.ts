@@ -3,3 +3,8 @@ export class EmailAlreadyExistsError extends Error {
         super("email already exists")
     }
 }
+export class EmailOrPasswordError extends Error {
+    constructor() {
+        super("incorrect email or password")
+    }
+}
