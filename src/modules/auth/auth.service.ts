@@ -1,7 +1,7 @@
 import argon2 from 'argon2';
 import { QueryError } from 'mysql2/promise';
 import { addUser, findUserByEmail, findUserById } from './auth.repository.js';
-import { EmailAlreadyExistsError, EmailOrPasswordError } from './auth.errors.js';
+import { EmailAlreadyExistsError, EmailOrPasswordError, UserNotExistError } from './auth.errors.js';
 import { SignJWT } from 'jose';
 import { config } from '../../config.js';
 interface ParsedRegisterInput {
@@ -61,6 +61,18 @@ async function matchCredentials(input: ParsedLoginInput) {
     const foundPassword = foundUser.password_hash
     const matchPasswords = await argon2.verify(foundPassword, input.password)
     if (!matchPasswords) throw new EmailOrPasswordError()
+
+    return {
+        id: foundUser.id,
+        name: foundUser.name,
+        email: foundUser.email,
+        role: foundUser.role
+    }
+}
+
+export async function findUserForAuthentication(userId: number) {
+    const foundUser = await findUserById(userId)
+    if (!foundUser) throw new UserNotExistError()
 
     return {
         id: foundUser.id,

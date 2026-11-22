@@ -8,3 +8,9 @@ export class EmailOrPasswordError extends Error {
         super("incorrect email or password")
     }
 }
+
+export class UserNotExistError extends Error {
+    constructor() {
+        super("the user does not exist")
+    }
+}

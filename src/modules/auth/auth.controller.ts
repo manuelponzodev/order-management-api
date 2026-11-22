@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { type Request, type Response } from 'express';
-import { registerUser, loginUser } from './auth.service.js';
-import { EmailAlreadyExistsError, EmailOrPasswordError } from './auth.errors.js';
+import { registerUser, loginUser, findUserForAuthentication } from './auth.service.js';
+import { EmailAlreadyExistsError, EmailOrPasswordError, UserNotExistError } from './auth.errors.js';
 
 const registerSchema = z.object({
     name: z.string().min(1),
@@ -13,6 +13,18 @@ const loginSchema = z.object({
     email: z.email(),
     password: z.string().min(8)
 })
+
+export async function getUser(req: Request, res: Response) {
+    try {
+        const user = await findUserForAuthentication(Number(res.locals.userId))
+        return res.status(200).json(user)
+    } catch (error) {
+        if (error instanceof UserNotExistError) {
+            return res.status(401).json({ message: error.message })
+        }
+        throw error
+    }
+}
 
 export async function register(req: Request, res: Response) {
     const parsedInput = registerSchema.safeParse(req.body)

@@ -17,7 +17,7 @@ export async function addUser(user: RegisterInput) {
 
 export async function findUserById(userId: number) {
     const [rows] = await pool.execute<RowDataPacket[]>(
-        "SELECT id, name, email, role FROM users WHERE id = ?", [userId]
+        "SELECT id, name, email, role FROM users WHERE id = ? AND deleted_at IS NULL", [userId]
     )
     return rows[0]
 }
