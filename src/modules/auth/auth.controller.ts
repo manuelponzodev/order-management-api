@@ -15,15 +15,7 @@ const loginSchema = z.object({
 })
 
 export async function getUser(req: Request, res: Response) {
-    try {
-        const user = await findUserForAuthentication(Number(res.locals.userId))
-        return res.status(200).json(user)
-    } catch (error) {
-        if (error instanceof UserNotExistError) {
-            return res.status(401).json({ message: error.message })
-        }
-        throw error
-    }
+    return res.status(200).json(res.locals.user)
 }
 
 export async function register(req: Request, res: Response) {
@@ -44,7 +36,6 @@ export async function register(req: Request, res: Response) {
 }
 
 export async function login(req: Request, res: Response) {
-    // REUSE CODE
     const parsedInput = loginSchema.safeParse(req.body)
     const isValidInput = parsedInput.success
 
