@@ -9,6 +9,7 @@ const env = z
     DB_USER: z.string(),
     DB_PASSWORD: z.string(),
     DB_NAME: z.string(),
+    JWT_SECRET: z.string().min(32)
   })
   .parse(process.env);
 

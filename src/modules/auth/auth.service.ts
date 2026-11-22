@@ -2,6 +2,8 @@ import argon2 from 'argon2';
 import { QueryError } from 'mysql2/promise';
 import { addUser, findUserByEmail, findUserById } from './auth.repository.js';
 import { EmailAlreadyExistsError, EmailOrPasswordError } from './auth.errors.js';
+import { SignJWT } from 'jose';
+import { config } from '../../config.js';
 interface ParsedRegisterInput {
     name: string
     email: string
@@ -36,7 +38,20 @@ export async function registerUser(input: ParsedRegisterInput) {
 }
 
 export async function loginUser(input: ParsedLoginInput) {
-    return await matchCredentials(input)
+    const userToBeLogged = await matchCredentials(input)
+
+    const secret = new TextEncoder().encode(config.JWT_SECRET)
+    const token = await new SignJWT({ role: userToBeLogged.role })
+        .setProtectedHeader({ alg: 'HS256' })
+        .setSubject(String(userToBeLogged.id))
+        .setExpirationTime('15m')
+        .setIssuedAt()
+        .sign(secret)
+
+    return {
+        ...userToBeLogged,
+        accessToken: token
+    }
 }
 
 async function matchCredentials(input: ParsedLoginInput) {
